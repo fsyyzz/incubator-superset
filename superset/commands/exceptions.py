@@ -38,7 +38,7 @@ class CommandInvalidError(CommandException):
 
     def __init__(self, message: str = "") -> None:
         self._invalid_exceptions: List[ValidationError] = []
-        super().__init__(self.message)
+        super().__init__(message)
 
     def add(self, exception: ValidationError) -> None:
         self._invalid_exceptions.append(exception)
@@ -77,11 +77,11 @@ class OwnersNotFoundValidationError(ValidationError):
     status = 422
 
     def __init__(self) -> None:
-        super().__init__(_("Owners are invalid"), field_names=["owners"])
+        super().__init__([_("Owners are invalid")], field_name="owners")
 
 
 class DatasourceNotFoundValidationError(ValidationError):
     status = 404
 
     def __init__(self) -> None:
-        super().__init__(_("Datasource does not exist"), field_names=["datasource_id"])
+        super().__init__([_("Datasource does not exist")], field_name="datasource_id")

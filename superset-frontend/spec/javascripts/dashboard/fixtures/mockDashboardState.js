@@ -17,17 +17,15 @@
  * under the License.
  */
 import { sliceId } from './mockChartQueries';
-import { BUILDER_PANE_TYPE } from '../../../../src/dashboard/util/constants';
 
 export default {
   sliceIds: [sliceId],
   expandedSlices: {},
   editMode: false,
-  builderPaneType: BUILDER_PANE_TYPE.NONE,
   hasUnsavedChanges: false,
   maxUndoHistoryExceeded: false,
   isStarred: true,
   isPublished: true,
   css: '',
-  focusedFilterField: [],
+  focusedFilterField: null,
 };

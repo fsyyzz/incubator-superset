@@ -19,9 +19,9 @@
 /* eslint-env browser */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, FormControl, FormGroup, Radio } from 'react-bootstrap';
-import { CategoricalColorNamespace } from '@superset-ui/color';
-import { t } from '@superset-ui/translation';
+import { FormControl, FormGroup, Radio } from 'react-bootstrap';
+import Button from 'src/components/Button';
+import { t, CategoricalColorNamespace } from '@superset-ui/core';
 
 import ModalTrigger from '../../components/ModalTrigger';
 import Checkbox from '../../components/Checkbox';
@@ -32,21 +32,21 @@ const propTypes = {
   addDangerToast: PropTypes.func.isRequired,
   dashboardId: PropTypes.number.isRequired,
   dashboardTitle: PropTypes.string.isRequired,
+  dashboardInfo: PropTypes.object.isRequired,
   expandedSlices: PropTypes.object.isRequired,
   layout: PropTypes.object.isRequired,
   saveType: PropTypes.oneOf([SAVE_TYPE_OVERWRITE, SAVE_TYPE_NEWDASHBOARD]),
   triggerNode: PropTypes.node.isRequired,
-  css: PropTypes.string.isRequired,
+  customCss: PropTypes.string.isRequired,
   colorNamespace: PropTypes.string,
   colorScheme: PropTypes.string,
   onSave: PropTypes.func.isRequired,
-  isMenuItem: PropTypes.bool,
   canOverwrite: PropTypes.bool.isRequired,
   refreshFrequency: PropTypes.number.isRequired,
+  lastModifiedTime: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
-  isMenuItem: false,
   saveType: SAVE_TYPE_OVERWRITE,
   colorNamespace: undefined,
   colorScheme: undefined,
@@ -74,7 +74,9 @@ class SaveModal extends React.PureComponent {
   }
 
   toggleDuplicateSlices() {
-    this.setState({ duplicateSlices: !this.state.duplicateSlices });
+    this.setState(prevState => ({
+      duplicateSlices: !prevState.duplicateSlices,
+    }));
   }
 
   handleSaveTypeChange(event) {
@@ -94,13 +96,16 @@ class SaveModal extends React.PureComponent {
     const { saveType, newDashName } = this.state;
     const {
       dashboardTitle,
+      dashboardInfo,
       layout: positions,
-      css,
+      customCss,
       colorNamespace,
       colorScheme,
       expandedSlices,
       dashboardId,
-      refreshFrequency,
+      refreshFrequency: currentRefreshFrequency,
+      shouldPersistRefreshFrequency,
+      lastModifiedTime,
     } = this.props;
 
     const scale = CategoricalColorNamespace.getScale(
@@ -108,9 +113,14 @@ class SaveModal extends React.PureComponent {
       colorNamespace,
     );
     const labelColors = colorScheme ? scale.getColorMap() : {};
+    // check refresh frequency is for current session or persist
+    const refreshFrequency = shouldPersistRefreshFrequency
+      ? currentRefreshFrequency
+      : dashboardInfo.metadata.refresh_frequency; // eslint-disable camelcase
+
     const data = {
       positions,
-      css,
+      css: customCss,
       color_namespace: colorNamespace,
       color_scheme: colorScheme,
       label_colors: labelColors,
@@ -119,6 +129,7 @@ class SaveModal extends React.PureComponent {
         saveType === SAVE_TYPE_NEWDASHBOARD ? newDashName : dashboardTitle,
       duplicate_slices: this.state.duplicateSlices,
       refresh_frequency: refreshFrequency,
+      last_modified_time: lastModifiedTime,
     };
 
     if (saveType === SAVE_TYPE_NEWDASHBOARD && !newDashName) {
@@ -144,7 +155,6 @@ class SaveModal extends React.PureComponent {
     return (
       <ModalTrigger
         ref={this.setModalRef}
-        isMenuItem={this.props.isMenuItem}
         triggerNode={this.props.triggerNode}
         modalTitle={t('Save Dashboard')}
         modalBody={
@@ -183,7 +193,11 @@ class SaveModal extends React.PureComponent {
         }
         modalFooter={
           <div>
-            <Button bsStyle="primary" onClick={this.saveDashboard}>
+            <Button
+              data-test="modal-save-dashboard-button"
+              buttonStyle="primary"
+              onClick={this.saveDashboard}
+            >
               {t('Save')}
             </Button>
           </div>

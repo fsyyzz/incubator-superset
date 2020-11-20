@@ -18,8 +18,9 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Tooltip, OverlayTrigger, MenuItem } from 'react-bootstrap';
-import { t } from '@superset-ui/translation';
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { t } from '@superset-ui/core';
+import withToasts from 'src/messageToasts/enhancers/withToasts';
 
 const propTypes = {
   copyNode: PropTypes.node,
@@ -27,21 +28,20 @@ const propTypes = {
   onCopyEnd: PropTypes.func,
   shouldShowText: PropTypes.bool,
   text: PropTypes.string,
-  inMenu: PropTypes.bool,
   wrapped: PropTypes.bool,
   tooltipText: PropTypes.string,
+  addDangerToast: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
   copyNode: <span>Copy</span>,
   onCopyEnd: () => {},
   shouldShowText: true,
-  inMenu: false,
   wrapped: true,
   tooltipText: t('Copy to clipboard'),
 };
 
-export default class CopyToClipboard extends React.Component {
+class CopyToClipboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -95,7 +95,9 @@ export default class CopyToClipboard extends React.Component {
         throw new Error(t('Not successful'));
       }
     } catch (err) {
-      window.alert(t('Sorry, your browser does not support copying. Use Ctrl / Cmd + C!')); // eslint-disable-line
+      this.props.addDangerToast(
+        t('Sorry, your browser does not support copying. Use Ctrl / Cmd + C!'),
+      );
     }
 
     document.body.removeChild(span);
@@ -156,22 +158,6 @@ export default class CopyToClipboard extends React.Component {
     );
   }
 
-  renderInMenu() {
-    return (
-      <OverlayTrigger
-        placement="top"
-        overlay={this.renderTooltip()}
-        trigger={['hover']}
-      >
-        <MenuItem>
-          <span onClick={this.onClick} onMouseOut={this.onMouseOut}>
-            {this.props.copyNode}
-          </span>
-        </MenuItem>
-      </OverlayTrigger>
-    );
-  }
-
   renderTooltip() {
     return (
       <Tooltip id="copy-to-clipboard-tooltip">{this.tooltipText()}</Tooltip>
@@ -179,13 +165,15 @@ export default class CopyToClipboard extends React.Component {
   }
 
   render() {
-    const { wrapped, inMenu } = this.props;
+    const { wrapped } = this.props;
     if (!wrapped) {
       return this.renderNotWrapped();
     }
-    return inMenu ? this.renderInMenu() : this.renderLink();
+    return this.renderLink();
   }
 }
+
+export default withToasts(CopyToClipboard);
 
 CopyToClipboard.propTypes = propTypes;
 CopyToClipboard.defaultProps = defaultProps;

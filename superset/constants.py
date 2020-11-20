@@ -50,11 +50,13 @@ class RouteMethod:  # pylint: disable=too-few-public-methods
 
     # RestModelView specific
     EXPORT = "export"
+    IMPORT = "import_"
     GET = "get"
     GET_LIST = "get_list"
     POST = "post"
     PUT = "put"
     RELATED = "related"
+    DISTINCT = "distinct"
 
     # Commonly used sets
     API_SET = {API_CREATE, API_DELETE, API_GET, API_READ, API_UPDATE}

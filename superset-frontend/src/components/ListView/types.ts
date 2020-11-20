@@ -16,6 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+import { ReactNode } from 'react';
+
 export interface SortColumn {
   id: string;
   desc?: boolean;
@@ -23,17 +25,48 @@ export interface SortColumn {
 
 export type SortColumns = SortColumn[];
 
-export interface Select {
+export interface SelectOption {
+  label: string;
+  value: any;
+}
+
+export interface CardSortSelectOption {
+  desc: boolean;
+  id: any;
   label: string;
   value: any;
 }
 
 export interface Filter {
-  Header: string;
+  Header: ReactNode;
   id: string;
-  operators: Select[];
-  input?: 'text' | 'textarea' | 'select' | 'checkbox';
-  selects?: Select[];
+  operators?: SelectOption[];
+  operator?:
+    | 'sw'
+    | 'ew'
+    | 'ct'
+    | 'eq'
+    | 'nsw'
+    | 'new'
+    | 'nct'
+    | 'neq'
+    | 'rel_m_m'
+    | 'rel_o_m'
+    | 'title_or_slug'
+    | 'name_or_description'
+    | 'all_text'
+    | 'chart_all_text'
+    | 'dataset_is_null_or_empty';
+  input?: 'text' | 'textarea' | 'select' | 'checkbox' | 'search';
+  unfilteredLabel?: string;
+  selects?: SelectOption[];
+  onFilterOpen?: () => void;
+  fetchSelects?: (
+    filterValue?: string,
+    pageIndex?: number,
+    pageSize?: number,
+  ) => Promise<SelectOption[]>;
+  paginate?: boolean;
 }
 
 export type Filters = Filter[];
@@ -41,7 +74,7 @@ export type Filters = Filter[];
 export interface FilterValue {
   id: string;
   operator?: string;
-  value: string | boolean | number;
+  value: string | boolean | number | null | undefined;
 }
 
 export interface FetchDataConfig {
@@ -52,21 +85,5 @@ export interface FetchDataConfig {
 }
 
 export interface InternalFilter extends FilterValue {
-  Header: string;
-}
-
-export interface FilterOperatorMap {
-  [columnId: string]: Array<{
-    name: string;
-    operator:
-      | 'sw'
-      | 'ew'
-      | 'ct'
-      | 'eq'
-      | 'nsw'
-      | 'new'
-      | 'nct'
-      | 'neq'
-      | 'rel_m_m';
-  }>;
+  Header?: string;
 }
