@@ -18,7 +18,11 @@
  */
 import React, { useState } from 'react';
 import { t, SupersetClient, styled } from '@superset-ui/core';
+import SyntaxHighlighter from 'react-syntax-highlighter/dist/cjs/light';
+import sql from 'react-syntax-highlighter/dist/cjs/languages/hljs/sql';
+import github from 'react-syntax-highlighter/dist/cjs/styles/hljs/github';
 import withToasts from 'src/messageToasts/enhancers/withToasts';
+import Loading from 'src/components/Loading';
 import { Dropdown, Menu } from 'src/common/components';
 import { useListViewResource, copyQueryLink } from 'src/views/CRUD/hooks';
 import ListViewCard from 'src/components/ListViewCard';
@@ -26,12 +30,9 @@ import DeleteModal from 'src/components/DeleteModal';
 import Icon from 'src/components/Icon';
 import SubMenu from 'src/components/Menu/SubMenu';
 import EmptyState from './EmptyState';
-import {
-  IconContainer,
-  CardContainer,
-  createErrorHandler,
-  CardStyles,
-} from '../utils';
+import { CardContainer, createErrorHandler, shortenSQL } from '../utils';
+
+SyntaxHighlighter.registerLanguage('sql', sql);
 
 const PAGE_SIZE = 3;
 
@@ -45,6 +46,8 @@ interface Query {
   description?: string;
   end_time?: string;
   label?: string;
+  changed_on_delta_humanized?: string;
+  sql?: string | null;
 }
 
 interface SavedQueriesProps {
@@ -55,29 +58,65 @@ interface SavedQueriesProps {
   addDangerToast: (arg0: string) => void;
   addSuccessToast: (arg0: string) => void;
   mine: Array<Query>;
+  showThumbnails: boolean;
+  featureFlag: boolean;
 }
 
-const QueryData = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.grayscale.light2};
-  .title {
-    font-weight: ${({ theme }) => theme.typography.weights.normal};
-    color: ${({ theme }) => theme.colors.grayscale.light1};
+export const CardStyles = styled.div`
+  cursor: pointer;
+  a {
+    text-decoration: none;
   }
-  .holder {
-    margin: ${({ theme }) => theme.gridUnit * 2}px;
+  .ant-card-cover {
+    border-bottom: 1px solid ${({ theme }) => theme.colors.grayscale.light2};
+    & > div {
+      height: 171px;
+    }
+  }
+  .gradient-container > div {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: ${({ theme }) => theme.colors.secondary.light3};
+    display: inline-block;
+    width: 100%;
+    height: 179px;
+    background-repeat: no-repeat;
+    vertical-align: middle;
   }
 `;
+
+const QueryData = styled.div`
+  svg {
+    margin-left: ${({ theme }) => theme.gridUnit * 10}px;
+  }
+  .query-title {
+    padding: ${({ theme }) => theme.gridUnit * 2 + 2}px;
+    font-size: ${({ theme }) => theme.typography.sizes.l}px;
+  }
+`;
+
+const QueryContainer = styled.div`
+  pre {
+    height: ${({ theme }) => theme.gridUnit * 40}px;
+    border: none !important;
+    background-color: ${({ theme }) =>
+      theme.colors.grayscale.light5} !important;
+    overflow: hidden;
+    padding: ${({ theme }) => theme.gridUnit * 4}px !important;
+  }
+`;
+
 const SavedQueries = ({
   user,
   addDangerToast,
   addSuccessToast,
   mine,
+  showThumbnails,
+  featureFlag,
 }: SavedQueriesProps) => {
   const {
-    state: { resourceCollection: queries },
+    state: { loading, resourceCollection: queries },
     hasPerm,
     fetchData,
     refreshData,
@@ -87,6 +126,8 @@ const SavedQueries = ({
     addDangerToast,
     true,
     mine,
+    [],
+    false,
   );
   const [queryFilter, setQueryFilter] = useState('Mine');
   const [queryDeleteModal, setQueryDeleteModal] = useState(false);
@@ -148,8 +189,8 @@ const SavedQueries = ({
     return filters;
   };
 
-  const getData = (filter: string) => {
-    return fetchData({
+  const getData = (filter: string) =>
+    fetchData({
       pageIndex: 0,
       pageSize: PAGE_SIZE,
       sortBy: [
@@ -160,7 +201,6 @@ const SavedQueries = ({
       ],
       filters: getFilters(filter),
     });
-  };
 
   const renderMenu = (query: Query) => (
     <Menu>
@@ -175,8 +215,9 @@ const SavedQueries = ({
       )}
       <Menu.Item
         onClick={() => {
-          if (query.id)
+          if (query.id) {
             copyQueryLink(query.id, addDangerToast, addSuccessToast);
+          }
         }}
       >
         {t('Share')}
@@ -193,6 +234,8 @@ const SavedQueries = ({
       )}
     </Menu>
   );
+
+  if (loading) return <Loading position="inline" />;
   return (
     <>
       {queryDeleteModal && (
@@ -215,6 +258,7 @@ const SavedQueries = ({
       <SubMenu
         activeChild={queryFilter}
         tabs={[
+          /* @TODO uncomment when fav functionality is implemented
           {
             name: 'Favorite',
             label: t('Favorite'),
@@ -222,6 +266,7 @@ const SavedQueries = ({
               getData('Favorite').then(() => setQueryFilter('Favorite'));
             },
           },
+          */
           {
             name: 'Mine',
             label: t('Mine'),
@@ -231,13 +276,14 @@ const SavedQueries = ({
         buttons={[
           {
             name: (
-              <IconContainer>
-                <Icon name="plus-small" /> SQL Query{' '}
-              </IconContainer>
+              <>
+                <i className="fa fa-plus" />
+                SQL Query
+              </>
             ),
             buttonStyle: 'tertiary',
             onClick: () => {
-              window.location.href = '/superset/sqllab';
+              window.location.href = '/superset/sqllab?new=true';
             },
           },
           {
@@ -259,35 +305,52 @@ const SavedQueries = ({
               key={q.id}
             >
               <ListViewCard
-                imgFallbackURL=""
                 imgURL=""
                 url={`/superset/sqllab?savedQueryId=${q.id}`}
                 title={q.label}
-                rows={q.rows}
-                description={t('Last run ', q.end_time)}
+                imgFallbackURL="/static/assets/images/empty-query.svg"
+                description={t('Last run %s', q.changed_on_delta_humanized)}
                 cover={
-                  <QueryData>
-                    <div className="holder">
-                      <div className="title">{t('Tables')}</div>
-                      <div>{q?.sql_tables?.length}</div>
-                    </div>
-                    <div className="holder">
-                      <div className="title">{t('Datasource Name')}</div>
-                      <div>{q?.sql_tables && q.sql_tables[0]?.table}</div>
-                    </div>
-                  </QueryData>
+                  q?.sql?.length && showThumbnails && featureFlag ? (
+                    <QueryContainer>
+                      <SyntaxHighlighter
+                        language="sql"
+                        lineProps={{
+                          style: {
+                            color: 'black',
+                            wordBreak: 'break-all',
+                            whiteSpace: 'pre-wrap',
+                          },
+                        }}
+                        style={github}
+                        wrapLines
+                        lineNumberStyle={{
+                          display: 'none',
+                        }}
+                        showLineNumbers={false}
+                      >
+                        {shortenSQL(q.sql, 25)}
+                      </SyntaxHighlighter>
+                    </QueryContainer>
+                  ) : showThumbnails && !q?.sql?.length ? (
+                    false
+                  ) : (
+                    <></>
+                  )
                 }
                 actions={
-                  <ListViewCard.Actions
-                    onClick={e => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                    }}
-                  >
-                    <Dropdown overlay={renderMenu(q)}>
-                      <Icon name="more-horiz" />
-                    </Dropdown>
-                  </ListViewCard.Actions>
+                  <QueryData>
+                    <ListViewCard.Actions
+                      onClick={e => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                      }}
+                    >
+                      <Dropdown overlay={renderMenu(q)}>
+                        <Icon name="more-horiz" />
+                      </Dropdown>
+                    </ListViewCard.Actions>
+                  </QueryData>
                 }
               />
             </CardStyles>

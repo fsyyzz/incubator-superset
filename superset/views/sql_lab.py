@@ -22,7 +22,7 @@ from flask_appbuilder.security.decorators import has_access, has_access_api
 from flask_babel import lazy_gettext as _
 
 from superset import db, is_feature_enabled
-from superset.constants import RouteMethod
+from superset.constants import MODEL_VIEW_RW_METHOD_PERMISSION_MAP, RouteMethod
 from superset.models.sql_lab import Query, SavedQuery, TableSchema, TabState
 from superset.typing import FlaskResponse
 from superset.utils import core as utils
@@ -36,6 +36,8 @@ class SavedQueryView(
     datamodel = SQLAInterface(SavedQuery)
     include_route_methods = RouteMethod.CRUD_SET
 
+    class_permission_name = "SavedQuery"
+    method_permission_name = MODEL_VIEW_RW_METHOD_PERMISSION_MAP
     list_title = _("List Saved Query")
     show_title = _("Show Saved Query")
     add_title = _("Add Saved Query")
@@ -97,6 +99,10 @@ class SavedQueryViewApi(SavedQueryView):  # pylint: disable=too-many-ancestors
         RouteMethod.API_UPDATE,
         RouteMethod.API_GET,
     }
+
+    class_permission_name = "SavedQuery"
+    method_permission_name = MODEL_VIEW_RW_METHOD_PERMISSION_MAP
+
     list_columns = [
         "id",
         "label",
@@ -135,6 +141,7 @@ class TabStateView(BaseSupersetView):
             schema=query_editor.get("schema"),
             sql=query_editor.get("sql", "SELECT ..."),
             query_limit=query_editor.get("queryLimit"),
+            hide_left_bar=query_editor.get("hideLeftBar"),
         )
         (
             db.session.query(TabState)
@@ -221,10 +228,12 @@ class TabStateView(BaseSupersetView):
     @has_access_api
     @expose("<int:tab_state_id>/query/<client_id>", methods=["DELETE"])
     def delete_query(  # pylint: disable=no-self-use
-        self, tab_state_id: str, client_id: str
+        self, tab_state_id: int, client_id: str
     ) -> FlaskResponse:
         db.session.query(Query).filter_by(
-            client_id=client_id, user_id=g.user.get_id(), sql_editor_id=tab_state_id
+            client_id=client_id,
+            user_id=g.user.get_id(),
+            sql_editor_id=str(tab_state_id),
         ).delete(synchronize_session=False)
         db.session.commit()
         return json_success(json.dumps("OK"))
@@ -290,4 +299,4 @@ class SqlLab(BaseSupersetView):
     @has_access
     def my_queries(self) -> FlaskResponse:  # pylint: disable=no-self-use
         """Assigns a list of found users to the given role."""
-        return redirect("/savedqueryview/list/?_flt_0_user={}".format(g.user.id))
+        return redirect("/savedqueryview/list/?_flt_0_user={}".format(g.user.get_id()))

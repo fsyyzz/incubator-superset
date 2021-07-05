@@ -18,7 +18,7 @@ import logging
 
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
-from superset.constants import RouteMethod
+from superset.constants import MODEL_API_RW_METHOD_PERMISSION_MAP, RouteMethod
 from superset.databases.filters import DatabaseFilter
 from superset.models.sql_lab import Query
 from superset.queries.filters import QueryFilter
@@ -33,14 +33,23 @@ class QueryRestApi(BaseSupersetModelRestApi):
     datamodel = SQLAInterface(Query)
 
     resource_name = "query"
-    allow_browser_login = True
-    include_route_methods = {RouteMethod.GET, RouteMethod.GET_LIST, RouteMethod.RELATED}
 
-    class_permission_name = "QueryView"
+    class_permission_name = "Query"
+    method_permission_name = MODEL_API_RW_METHOD_PERMISSION_MAP
+
+    allow_browser_login = True
+    include_route_methods = {
+        RouteMethod.GET,
+        RouteMethod.GET_LIST,
+        RouteMethod.RELATED,
+        RouteMethod.DISTINCT,
+    }
+
     list_columns = [
         "id",
         "changed_on",
         "database.database_name",
+        "executed_sql",
         "rows",
         "schema",
         "sql",
@@ -57,6 +66,7 @@ class QueryRestApi(BaseSupersetModelRestApi):
         "tracking_url",
     ]
     show_columns = [
+        "id",
         "changed_on",
         "client_id",
         "database.id",
@@ -101,9 +111,11 @@ class QueryRestApi(BaseSupersetModelRestApi):
 
     related_field_filters = {
         "created_by": RelatedFieldFilter("first_name", FilterRelatedOwners),
+        "user": RelatedFieldFilter("first_name", FilterRelatedOwners),
     }
 
-    search_columns = ["changed_on", "database", "sql", "status", "user"]
+    search_columns = ["changed_on", "database", "sql", "status", "user", "start_time"]
 
     filter_rel_fields = {"database": [["id", DatabaseFilter, lambda: []]]}
     allowed_rel_fields = {"database", "user"}
+    allowed_distinct_fields = {"status"}

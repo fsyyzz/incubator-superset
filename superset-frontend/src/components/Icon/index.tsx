@@ -20,26 +20,28 @@ import React, { SVGProps } from 'react';
 
 import { ReactComponent as AlertIcon } from 'images/icons/alert.svg';
 import { ReactComponent as AlertSolidIcon } from 'images/icons/alert_solid.svg';
+import { ReactComponent as AlertSolidSmallIcon } from 'images/icons/alert_solid_small.svg';
 import { ReactComponent as BinocularsIcon } from 'images/icons/binoculars.svg';
 import { ReactComponent as BoltIcon } from 'images/icons/bolt.svg';
 import { ReactComponent as BoltSmallIcon } from 'images/icons/bolt_small.svg';
+import { ReactComponent as CrossFilterBadge } from 'images/icons/cross-filter-badge.svg';
 import { ReactComponent as BoltSmallRunIcon } from 'images/icons/bolt_small_run.svg';
 import { ReactComponent as CalendarIcon } from 'images/icons/calendar.svg';
 import { ReactComponent as CancelIcon } from 'images/icons/cancel.svg';
 import { ReactComponent as CancelSolidIcon } from 'images/icons/cancel_solid.svg';
 import { ReactComponent as CancelXIcon } from 'images/icons/cancel-x.svg';
+import { ReactComponent as CardViewIcon } from 'images/icons/card_view.svg';
 import { ReactComponent as CardsIcon } from 'images/icons/cards.svg';
 import { ReactComponent as CardsLockedIcon } from 'images/icons/cards_locked.svg';
-import { ReactComponent as CardViewIcon } from 'images/icons/card_view.svg';
 import { ReactComponent as CaretDownIcon } from 'images/icons/caret_down.svg';
 import { ReactComponent as CaretLeftIcon } from 'images/icons/caret_left.svg';
 import { ReactComponent as CaretRightIcon } from 'images/icons/caret_right.svg';
 import { ReactComponent as CaretUpIcon } from 'images/icons/caret_up.svg';
 import { ReactComponent as CertifiedIcon } from 'images/icons/certified.svg';
+import { ReactComponent as CheckIcon } from 'images/icons/check.svg';
 import { ReactComponent as CheckboxHalfIcon } from 'images/icons/checkbox-half.svg';
 import { ReactComponent as CheckboxOffIcon } from 'images/icons/checkbox-off.svg';
 import { ReactComponent as CheckboxOnIcon } from 'images/icons/checkbox-on.svg';
-import { ReactComponent as CheckIcon } from 'images/icons/check.svg';
 import { ReactComponent as CircleCheckIcon } from 'images/icons/circle_check.svg';
 import { ReactComponent as CircleCheckSolidIcon } from 'images/icons/circle_check_solid.svg';
 import { ReactComponent as CircleIcon } from 'images/icons/circle.svg';
@@ -63,6 +65,7 @@ import { ReactComponent as EmailIcon } from 'images/icons/email.svg';
 import { ReactComponent as ErrorIcon } from 'images/icons/error.svg';
 import { ReactComponent as ErrorSolidIcon } from 'images/icons/error_solid.svg';
 import { ReactComponent as ErrorSolidSmallIcon } from 'images/icons/error_solid_small.svg';
+import { ReactComponent as ExclamationIcon } from 'images/icons/exclamation.svg';
 import { ReactComponent as ExpandIcon } from 'images/icons/expand.svg';
 import { ReactComponent as EyeIcon } from 'images/icons/eye.svg';
 import { ReactComponent as EyeSlashIcon } from 'images/icons/eye_slash.svg';
@@ -80,6 +83,7 @@ import { ReactComponent as FilterIcon } from 'images/icons/filter.svg';
 import { ReactComponent as FilterSmallIcon } from 'images/icons/filter_small.svg';
 import { ReactComponent as FolderIcon } from 'images/icons/folder.svg';
 import { ReactComponent as FullIcon } from 'images/icons/full.svg';
+import { ReactComponent as FunctionIcon } from 'images/icons/function_x.svg';
 import { ReactComponent as GearIcon } from 'images/icons/gear.svg';
 import { ReactComponent as GridIcon } from 'images/icons/grid.svg';
 import { ReactComponent as ImageIcon } from 'images/icons/image.svg';
@@ -91,6 +95,7 @@ import { ReactComponent as JoinIcon } from 'images/icons/join.svg';
 import { ReactComponent as KeyboardIcon } from 'images/icons/keyboard.svg';
 import { ReactComponent as LayersIcon } from 'images/icons/layers.svg';
 import { ReactComponent as LightbulbIcon } from 'images/icons/lightbulb.svg';
+import { ReactComponent as LinkIcon } from 'images/icons/link.svg';
 import { ReactComponent as ListIcon } from 'images/icons/list.svg';
 import { ReactComponent as ListViewIcon } from 'images/icons/list_view.svg';
 import { ReactComponent as LocationIcon } from 'images/icons/location.svg';
@@ -119,13 +124,15 @@ import { ReactComponent as PlusSolidIcon } from 'images/icons/plus_solid.svg';
 import { ReactComponent as QueuedIcon } from 'images/icons/queued.svg';
 import { ReactComponent as RefreshIcon } from 'images/icons/refresh.svg';
 import { ReactComponent as RunningIcon } from 'images/icons/running.svg';
+import { ReactComponent as SaveIcon } from 'images/icons/save.svg';
+import { ReactComponent as SQLIcon } from 'images/icons/sql.svg';
 import { ReactComponent as SearchIcon } from 'images/icons/search.svg';
 import { ReactComponent as ServerIcon } from 'images/icons/server.svg';
 import { ReactComponent as ShareIcon } from 'images/icons/share.svg';
+import { ReactComponent as SlackIcon } from 'images/icons/slack.svg';
 import { ReactComponent as SortAscIcon } from 'images/icons/sort_asc.svg';
 import { ReactComponent as SortDescIcon } from 'images/icons/sort_desc.svg';
 import { ReactComponent as SortIcon } from 'images/icons/sort.svg';
-import { ReactComponent as SQLIcon } from 'images/icons/sql.svg';
 import { ReactComponent as TableIcon } from 'images/icons/table.svg';
 import { ReactComponent as TagIcon } from 'images/icons/tag.svg';
 import { ReactComponent as TrashIcon } from 'images/icons/trash.svg';
@@ -138,33 +145,36 @@ import { ReactComponent as WarningIcon } from 'images/icons/warning.svg';
 import { ReactComponent as WarningSolidIcon } from 'images/icons/warning_solid.svg';
 import { ReactComponent as XLargeIcon } from 'images/icons/x-large.svg';
 import { ReactComponent as XSmallIcon } from 'images/icons/x-small.svg';
+import { ReactComponent as DefaultDatabaseIcon } from 'images/icons/default_db_image.svg';
 
 export type IconName =
-  | 'alert-solid'
   | 'alert'
+  | 'alert-solid'
+  | 'alert-solid-small'
   | 'binoculars'
-  | 'bolt-small-run'
-  | 'bolt-small'
   | 'bolt'
+  | 'bolt-small'
+  | 'bolt-small-run'
   | 'calendar'
+  | 'cancel'
   | 'cancel-solid'
   | 'cancel-x'
-  | 'cancel'
   | 'card-view'
-  | 'cards-locked'
   | 'cards'
+  | 'cards-locked'
   | 'caret-down'
   | 'caret-left'
   | 'caret-right'
   | 'caret-up'
   | 'certified'
+  | 'cross-filter-badge'
   | 'check'
   | 'checkbox-half'
   | 'checkbox-off'
   | 'checkbox-on'
-  | 'circle-check-solid'
-  | 'circle-check'
   | 'circle'
+  | 'circle-check'
+  | 'circle-check-solid'
   | 'clock'
   | 'close'
   | 'code'
@@ -175,19 +185,21 @@ export type IconName =
   | 'copy'
   | 'cursor-target'
   | 'database'
+  | 'default-database'
   | 'dataset-physical'
-  | 'dataset-virtual-greyscale'
   | 'dataset-virtual'
+  | 'dataset-virtual-greyscale'
   | 'download'
-  | 'edit-alt'
   | 'edit'
+  | 'edit-alt'
   | 'email'
-  | 'error-solid-small'
-  | 'error-solid'
   | 'error'
+  | 'error-solid'
+  | 'error-solid-small'
+  | 'exclamation'
   | 'expand'
-  | 'eye-slash'
   | 'eye'
+  | 'eye-slash'
   | 'favorite-selected'
   | 'favorite-small-selected'
   | 'favorite-unselected'
@@ -198,30 +210,32 @@ export type IconName =
   | 'field-num'
   | 'field-struct'
   | 'file'
-  | 'filter-small'
   | 'filter'
+  | 'filter-small'
   | 'folder'
   | 'full'
+  | 'function'
   | 'gear'
   | 'grid'
   | 'image'
   | 'import'
-  | 'info-solid-small'
-  | 'info-solid'
   | 'info'
+  | 'info-solid'
+  | 'info-solid-small'
   | 'join'
   | 'keyboard'
   | 'layers'
+  | 'link'
   | 'lightbulb'
-  | 'list-view'
   | 'list'
+  | 'list-view'
   | 'location'
   | 'lock-locked'
   | 'lock-unlocked'
   | 'map'
   | 'message'
-  | 'minus-solid'
   | 'minus'
+  | 'minus-solid'
   | 'more-horiz'
   | 'move'
   | 'nav-charts'
@@ -234,19 +248,21 @@ export type IconName =
   | 'offline'
   | 'paperclip'
   | 'placeholder'
+  | 'plus'
   | 'plus-large'
   | 'plus-small'
   | 'plus-solid'
-  | 'plus'
   | 'queued'
   | 'refresh'
   | 'running'
+  | 'save'
   | 'search'
   | 'server'
   | 'share'
+  | 'slack'
+  | 'sort'
   | 'sort-asc'
   | 'sort-desc'
-  | 'sort'
   | 'sql'
   | 'table'
   | 'tag'
@@ -256,8 +272,8 @@ export type IconName =
   | 'triangle-up'
   | 'up-level'
   | 'user'
-  | 'warning-solid'
   | 'warning'
+  | 'warning-solid'
   | 'x-large'
   | 'x-small';
 
@@ -266,8 +282,10 @@ export const iconsRegistry: Record<
   React.ComponentType<SVGProps<SVGSVGElement>>
 > = {
   'alert-solid': AlertSolidIcon,
-  'bolt-small-run': BoltSmallRunIcon,
+  'alert-solid-small': AlertSolidSmallIcon,
   'bolt-small': BoltSmallIcon,
+  'bolt-small-run': BoltSmallRunIcon,
+  'cross-filter-badge': CrossFilterBadge,
   'cancel-solid': CancelSolidIcon,
   'cancel-x': CancelXIcon,
   'card-view': CardViewIcon,
@@ -279,16 +297,17 @@ export const iconsRegistry: Record<
   'checkbox-half': CheckboxHalfIcon,
   'checkbox-off': CheckboxOffIcon,
   'checkbox-on': CheckboxOnIcon,
-  'circle-check-solid': CircleCheckSolidIcon,
   'circle-check': CircleCheckIcon,
+  'circle-check-solid': CircleCheckSolidIcon,
   'color-palette': ColorPaletteIcon,
   'cursor-target': CursorTargeIcon,
+  'default-database': DefaultDatabaseIcon,
   'dataset-physical': DatasetPhysicalIcon,
-  'dataset-virtual-greyscale': DatasetVirtualGreyscaleIcon,
   'dataset-virtual': DatasetVirtualIcon,
+  'dataset-virtual-greyscale': DatasetVirtualGreyscaleIcon,
   'edit-alt': EditAltIcon,
-  'error-solid-small': ErrorSolidSmallIcon,
   'error-solid': ErrorSolidIcon,
+  'error-solid-small': ErrorSolidSmallIcon,
   'eye-slash': EyeSlashIcon,
   'favorite-selected': FavoriteSelectedIcon,
   'favorite-small-selected': FavoriteSmallSelectedIcon,
@@ -300,8 +319,8 @@ export const iconsRegistry: Record<
   'field-num': FieldNumIcon,
   'field-struct': FieldStructIcon,
   'filter-small': FilterSmallIcon,
-  'info-solid-small': InfoSolidSmallIcon,
   'info-solid': InfoSolidIcon,
+  'info-solid-small': InfoSolidSmallIcon,
   'list-view': ListViewIcon,
   'lock-locked': LockLockedIcon,
   'lock-unlocked': LockUnlockedIcon,
@@ -346,12 +365,14 @@ export const iconsRegistry: Record<
   edit: EditIcon,
   email: EmailIcon,
   error: ErrorIcon,
+  exclamation: ExclamationIcon,
   expand: ExpandIcon,
   eye: EyeIcon,
   file: FileIcon,
   filter: FilterIcon,
   folder: FolderIcon,
   full: FullIcon,
+  function: FunctionIcon,
   gear: GearIcon,
   grid: GridIcon,
   image: ImageIcon,
@@ -360,6 +381,7 @@ export const iconsRegistry: Record<
   join: JoinIcon,
   keyboard: KeyboardIcon,
   layers: LayersIcon,
+  link: LinkIcon,
   lightbulb: LightbulbIcon,
   list: ListIcon,
   location: LocationIcon,
@@ -375,9 +397,11 @@ export const iconsRegistry: Record<
   queued: QueuedIcon,
   refresh: RefreshIcon,
   running: RunningIcon,
+  save: SaveIcon,
   search: SearchIcon,
   server: ServerIcon,
   share: ShareIcon,
+  slack: SlackIcon,
   sort: SortIcon,
   sql: SQLIcon,
   table: TableIcon,
@@ -387,20 +411,29 @@ export const iconsRegistry: Record<
   warning: WarningIcon,
 };
 
-interface IconProps extends SVGProps<SVGSVGElement> {
+export interface IconProps extends SVGProps<SVGSVGElement> {
   name: IconName;
+  'data-test'?: string;
 }
 
 const Icon = ({
   name,
   color = '#666666',
   viewBox = '0 0 24 24',
+  'data-test': dataTest,
   ...rest
 }: IconProps) => {
   const Component = iconsRegistry[name];
 
   return (
-    <Component color={color} viewBox={viewBox} data-test={name} {...rest} />
+    <Component
+      role="img"
+      aria-label={name}
+      color={color}
+      viewBox={viewBox}
+      data-test={dataTest ?? name}
+      {...rest}
+    />
   );
 };
 
